@@ -44,12 +44,9 @@ class EmployeeCheck
             echo "We do not have such employee type!";
         }
 
-        try {
-            $possibility = $object->$possibility();
-            return $possibility ? 'true' : 'false';
-        } catch (\Exception $e) {
-            return 'false';
-        }
+        $methods = $this->getClassMethods(get_class($object));
+
+        return in_array($possibility, $methods) ? 'true' : 'false';
     }
 
     /**
@@ -99,12 +96,24 @@ class EmployeeCheck
     private function preparePossibilitiesList(Employee $employee) : string
     {
         $pos = null;
-        $pos .= $employee->writeCode() ? $employee->writeCode() . PHP_EOL : null;
-        $pos .= $employee->draw() ? $employee->draw() . PHP_EOL : null;
-        $pos .= $employee->testCode() ? $employee->testCode() . PHP_EOL : null;
-        $pos .= $employee->communicateWithManager() ? $employee->communicateWithManager() . PHP_EOL : null;
-        $pos .= $employee->setTasks() ? $employee->setTasks() . PHP_EOL : null;
-
+        $methods = $this->getClassMethods(get_class($employee));
+        if (count($methods)) {
+            foreach ($methods as $method) {
+                $pos .= $employee->$method() . PHP_EOL;
+            }
+        }
         return $pos;
+    }
+
+    private function getClassMethods(string $className) : array
+    {
+        $methods = [];
+        $ref = new \ReflectionClass($className);
+        foreach ($ref->getMethods() as $method) {
+            if ($method->class == $className) {
+                $methods[] = $method->name;
+            }
+        }
+        return $methods;
     }
 }
