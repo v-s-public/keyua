@@ -38,6 +38,6 @@ class Employee extends Command
      */
     public function handle()
     {
-        EmployeeService::checkPossibility($this->argument('employee'), $this->argument('possibility'));
+        echo EmployeeService::checkPossibility($this->argument('employee'), $this->argument('possibility'));
     }
 }

@@ -38,6 +38,6 @@ class Company extends Command
      */
     public function handle()
     {
-        EmployeeService::getPossibilities($this->argument('employee'));
+        echo EmployeeService::getPossibilities($this->argument('employee'));
     }
 }
